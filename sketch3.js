@@ -4,7 +4,7 @@ let angle = 1/3.0;
 let columns = [];
 let square;
 let subdivideLikelihood = 0.5;
-let colors = new ColorSet(3, 18);
+let colors;
 
 class Column {
   constructor(x, y, size, height, color) {
@@ -64,6 +64,8 @@ function setup() {
   ortho(-width / 2, width / 2, height / 2, -height / 2, 0, 1000);
   // ortho();
   angleMode(DEGREES);
+
+  colors = new ColorSet(3, 18);
   
   noStroke();
 

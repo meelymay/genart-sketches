@@ -1,0 +1,4 @@
+grids
+n-colors
+genes w/ seeds
+graddient mountains

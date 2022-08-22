@@ -1,10 +1,10 @@
-let h = 1000;
+let h = 750;
 let w = h;
 let angle = 1/3.0;
 let columns = [];
 let square;
 let subdivideLikelihood = 0.5;
-let colors = new ColorSet(3, 18);
+let colors;
 
 class Column {
   constructor(x, y, size, height, color, otherColor) {
@@ -45,10 +45,6 @@ class Column {
       arcStart = PI * 3/2.0;
       arcStop = 0;
     }
-
-    // fill(this.otherColor.r, this.otherColor.g, this.otherColor.b);
-    // stroke(this.otherColor.r, this.otherColor.g, this.otherColor.b);
-    // arc(arcCentX, arcCentY, this.size*2 + 1, this.size*2 + 1, arcStart, arcStop);
   }
 }
 
@@ -90,6 +86,8 @@ function setup() {
   noLoop();
   // angleMode(DEGREES);
   rectMode(CENTER);
+
+  colors = new ColorSet(3, 18);
   
   strokeWeight(1);
 
@@ -99,4 +97,10 @@ function setup() {
 function draw() {
   background(0);
   square.draw();
+}
+
+function keyTyped() {
+  if (key === 's') {
+    saveCanvas('subdiv_' + colors.toHash(), 'png')
+  }
 }
