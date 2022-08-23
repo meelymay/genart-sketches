@@ -7,7 +7,7 @@ class Tree {
     this.height = height;
     this.width = width;
     this.dy = 2.5;
-    this.maxThick = 35;
+    this.maxThick = 38;
     this.branches = [new Branch(x, y, 30, this.maxThick, c, 0, this.dy)];
   }
 
@@ -23,7 +23,8 @@ class Tree {
 
         // taper if thinner than...
         let taperThick = 7 * (this.height/branch.y/2);
-        taperThick *= (1 + 10*abs(branch.x - this.width/2)/this.width);
+        let centerDist = abs(branch.x - this.width/2);
+        taperThick *= (1 + centerDist**1.5/this.width);
         if (branch.thickness < taperThick) {
           branch.draw();
           branch.step(true);
@@ -69,8 +70,9 @@ class Branch {
   }
 
   step(taper) {
-    this.x += this.dx;
-    this.dx += randomGaussian(this.ddx, .1);
+    this.trueDx = this.dx * (1 - (this.y/height)**3);
+    this.x += this.trueDx;
+    this.dx += randomGaussian(this.ddx, .25);
     this.ddx += randomGaussian(0, .01);
     this.y -= this.dy;
 
@@ -96,11 +98,11 @@ class Branch {
   }
 
   run() {
-    return this.thickness/(this.dx**2/this.dy**2 +1)**0.5;
+    return this.thickness/(this.trueDx**2/this.dy**2 +1)**0.5;
   }
 
   rise() {
-    return this.run()*this.dx/this.dy;
+    return this.run()*this.trueDx/this.dy;
   }
 
   draw() {
