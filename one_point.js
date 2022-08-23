@@ -1,10 +1,10 @@
 let w = 1000;
-let h = 700;
+let h = 1200;
 
-let vanX = 0;
-let vanY = 75;
-let zDistance = 1000;
-let eyeX = 0;
+let vanX = 300;
+let vanY = 200;
+let zDistance = 200;
+let eyeX = vanX;
 let eyeY = vanY;
 
 let roadLoc;
@@ -12,14 +12,94 @@ let roadLoc;
 let colors;
 let bg;
 
-let roadW = 120;
-let sidewalkW = 30;
+let roadW = 280;
+let sidewalkW = 100;
+
+class BuildingPersp {
+	constructor(z, width, height, depth) {
+		this.z = z;
+		this.width = width;
+		this.height = height;
+		this.depth = depth;
+		this.color = colors.chooseColor();
+	}
+
+	draw() {
+		let buildZ1 = this.z;
+		let buildZ2 = this.z + this.depth;
+		let buildH = this.height;
+
+		fill(this.color.c());
+		stroke(this.color.r/4, this.color.g/4, this.color.b/4);
+
+		drawQuadOnXYPlane(roadLoc - roadW/2 - sidewalkW, 0, this.z, this.width, this.height);
+		drawQuadOnYZPlane(roadLoc - roadW/2 - sidewalkW, 0, this.z, this.height, this.depth);
+
+		// beginShape();
+		// let coords = toPicPlaneCoords(roadLoc - roadW/2 - sidewalkW, 0, buildZ1);
+		// vertex(coords[0], coords[1]);
+		// coords = toPicPlaneCoords(roadLoc - roadW/2 - sidewalkW, 0, buildZ2);
+		// vertex(coords[0], coords[1]);
+		// coords = toPicPlaneCoords(roadLoc - roadW/2 - sidewalkW, buildH, buildZ2);
+		// vertex(coords[0], coords[1]);
+		// coords = toPicPlaneCoords(roadLoc - roadW/2 - sidewalkW, buildH, buildZ1);
+		// vertex(coords[0], coords[1]);
+		// coords = toPicPlaneCoords(roadLoc - roadW/2 - sidewalkW, 0, buildZ1);
+		// vertex(coords[0], coords[1]);
+		// endShape();
+	}
+}
 
 function toPicPlaneCoords(x, y, z) {	
 	let xPrime = eyeX + (x - eyeX) * zDistance / (z + zDistance);
 	let yPrime = eyeY + (y - eyeY) * zDistance / (z + zDistance);
 
 	return [xPrime, yPrime];
+}
+
+function drawQuadOnYZPlane(x, y, z, h, d) {
+	beginShape();
+	let coords = toPicPlaneCoords(x, y, z);
+	vertex(coords[0], coords[1]);
+	coords = toPicPlaneCoords(x, y, z + d);
+	vertex(coords[0], coords[1]);
+	coords = toPicPlaneCoords(x, y + h, z + d);
+	vertex(coords[0], coords[1]);
+	coords = toPicPlaneCoords(x, y + h, z);
+	vertex(coords[0], coords[1]);
+	coords = toPicPlaneCoords(x, y, z);
+	vertex(coords[0], coords[1]);
+	endShape();
+}
+
+function drawQuadOnXYPlane(x, y, z, w, h) {
+	beginShape();
+	let coords = toPicPlaneCoords(x, y, z);
+	vertex(coords[0], coords[1]);
+	coords = toPicPlaneCoords(x + w, y, z);
+	vertex(coords[0], coords[1]);
+	coords = toPicPlaneCoords(x + w, y + h, z);
+	vertex(coords[0], coords[1]);
+	coords = toPicPlaneCoords(x, y + h, z);
+	vertex(coords[0], coords[1]);
+	coords = toPicPlaneCoords(x, y, z);
+	vertex(coords[0], coords[1]);
+	endShape();
+}
+
+function drawQuadOnXZPlane(x, y, z, w, d) {
+	beginShape();
+	let coords = toPicPlaneCoords(x, y, z);
+	vertex(coords[0], coords[1]);
+	coords = toPicPlaneCoords(x, y, z + d);
+	vertex(coords[0], coords[1]);
+	coords = toPicPlaneCoords(x + w, y, z + d);
+	vertex(coords[0], coords[1]);
+	coords = toPicPlaneCoords(x + w, y, z);
+	vertex(coords[0], coords[1]);
+	coords = toPicPlaneCoords(x, y, z);
+	vertex(coords[0], coords[1]);
+	endShape();
 }
 
 function setup() {
@@ -31,9 +111,9 @@ function setup() {
 
 	roadLoc = 0;
 
-	background(200);  // bg.c());
+	background(bg.c());
 
-	stroke(0); // colors.chooseColor().c());
+	stroke(colors.chooseColor().c());
 
 	noLoop();
 }
@@ -61,70 +141,69 @@ function draw() {
 
 	coords = toPicPlaneCoords(x, y, z);
 	fill(0, 255, 0);
-	ellipse(coords[0], coords[1], 10, 10);
 	line(coords[0], coords[1], vanX, vanY);
+	z = -sidewalkW/2;
 	x = roadLoc + roadW/2;
 	coords = toPicPlaneCoords(x, y, z);
 	line(coords[0], coords[1], vanX, vanY);
 
 	// sidewalks
+	z = - zDistance + .01;
 	x = roadLoc - roadW/2 - sidewalkW;
 	coords = toPicPlaneCoords(x, y, z);
 	line(coords[0], coords[1], vanX, vanY);
+	z = -sidewalkW/2;
 	x = roadLoc + roadW/2 + sidewalkW;
 	coords = toPicPlaneCoords(x, y, z);
 	line(coords[0], coords[1], vanX, vanY);
 
 	// sidewalk lines
-	for (z = -zDistance + .01; z < 10 * zDistance; z += 30) {
+	for (z = -zDistance + .01; z < 20 * zDistance; z += 30) {
 		x = roadLoc - roadW/2 - sidewalkW;
 		x2 = roadLoc - roadW/2;
 		coords = toPicPlaneCoords(x, y, z);
 		coords2 = toPicPlaneCoords(x2, y, z);
 		line(coords[0], coords[1], coords2[0], coords2[1]);
 
-		x = roadLoc + roadW/2 + sidewalkW;
-		x2 = roadLoc + roadW/2;
-		coords = toPicPlaneCoords(x, y, z);
-		coords2 = toPicPlaneCoords(x2, y, z);
-		line(coords[0], coords[1], coords2[0], coords2[1]);
+		if (z > -sidewalkW/2) {
+			x = roadLoc + roadW/2 + sidewalkW;
+			x2 = roadLoc + roadW/2;
+			coords = toPicPlaneCoords(x, y, z);
+			coords2 = toPicPlaneCoords(x2, y, z);
+			line(coords[0], coords[1], coords2[0], coords2[1]);
+		}
 	}
 
+	// sidewalk corner
+	coords = toPicPlaneCoords(roadLoc + roadW/2, 0, 0);
+	coords2 = toPicPlaneCoords(1000, 0, 0);
+	line(coords[0], coords[1], coords2[0], coords2[1]);
+	coords = toPicPlaneCoords(roadLoc + roadW/2, 0, -sidewalkW/2);
+	coords2 = toPicPlaneCoords(1000, 0, -sidewalkW/2);
+	line(coords[0], coords[1], coords2[0], coords2[1]);
+
 	// experiment
-	let buildZ1 = -500;
-	let buildZ2 = 100;
-	let buildH = 100;
+	let lastZ = -100;
+	let builds = [];
+	for (let i = 0; i < 20; i++) {
+		let width = randomGaussian(200, 20);
+		let depth = max(20, randomGaussian(150, 50));
+		let height = randomGaussian(600, 200);
+		builds.push(new BuildingPersp(lastZ, -width, height, depth));
+		lastZ += depth + 10;
+	}
 
-	fill(255,0,0);
-	beginShape();
-	coords = toPicPlaneCoords(roadLoc - roadW/2 - sidewalkW, 0, buildZ1);
-	vertex(coords[0], coords[1]);
-	coords = toPicPlaneCoords(roadLoc - roadW/2 - sidewalkW, 0, buildZ2);
-	vertex(coords[0], coords[1]);
-	coords = toPicPlaneCoords(roadLoc - roadW/2 - sidewalkW, buildH, buildZ2);
-	vertex(coords[0], coords[1]);
-	coords = toPicPlaneCoords(roadLoc - roadW/2 - sidewalkW, buildH, buildZ1);
-	vertex(coords[0], coords[1]);
-	coords = toPicPlaneCoords(roadLoc - roadW/2 - sidewalkW, 0, buildZ1);
-	vertex(coords[0], coords[1]);
-	endShape();
+	for (let b = builds.length-1; b >= 0; b--) {
+		builds[b].draw();
+	}
 
-	// let r = 250;
-	// let b = 0;
-	// noStroke();
-	// for (let expZ = -zDistance; expZ < 1000; expZ += 50) {
-	// 	fill(r, 0, b);
-	// 	let cs = toPicPlaneCoords(roadW/2, 0, expZ);
-	// 	ellipse(cs[0], cs[1], 10, 10);
-	// 	r -= 25;
-	// 	b += 25;
-	// }
+	drawQuadOnXYPlane(roadLoc + roadW/2 + sidewalkW, 0, 0, 500, 400, 500);
 
 	pop();
 }
 
 function keyTyped() {
   if (key === 's') {
-    saveCanvas('city_comp_' + colors.toHash(), 'png')
+    saveCanvas('city_persp_' + colors.toHash(), 'png')
   }
 }
