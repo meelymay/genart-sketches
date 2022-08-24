@@ -197,6 +197,21 @@ function draw() {
 		builds[b].draw();
 	}
 
+	// tree???
+	push();
+	let treeZ = 0;
+	let treeHeight = 200;
+	// Tree(w/2, h, colors.chooseColor(), w, h * 0.8)
+	let treeX = roadLoc - roadW / 2;
+	coords = toPicPlaneCoords(treeX, 0, treeZ);
+
+	// translate(coords[0], coords[1]);
+	rotate(PI);
+	let tree = new Tree(0, treeHeight, colors.chooseColor(), treeHeight*4, treeHeight, 2.5);
+	tree.draw();
+	pop();
+
+	// foreground building
 	drawQuadOnXYPlane(roadLoc + roadW/2 + sidewalkW, 0, 0, 500, 400, 500);
 
 	pop();
