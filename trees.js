@@ -61,7 +61,7 @@ class Tree {
         }
 
         // taper if thinner than... (or too many branches)
-        let taperThick = taperThickMult * (this.height/branch.y);
+        let taperThick = taperThickMult * (this.height/(this.height - branch.curHeight()));
         let centerDist = abs(branch.x - this.ogX);
         taperThick *= (1 + centerDist/this.width);
         if (branch.thickness < taperThick || this.branches.length > 100) {
@@ -154,7 +154,9 @@ class Branch {
   }
 
   curHeight() {
-    return this.ogY - this.y;
+    let c = this.ogY - this.y;
+    // console.log(this.ogX, this.ogY, c);
+    return c;
   }
 
   run() {
@@ -170,10 +172,10 @@ class Branch {
     let run = this.run();
     let rise = this.rise();
     let startX = this.x - run / 2;
-    let startY = this.y - rise / 2;
+    let startY = this.curHeight() - rise / 2;
     let endX = this.x + run / 2;
-    let endY = this.y + rise / 2;
+    let endY = this.curHeight() + rise / 2;
     // line(this.x, this.y, this.x + this.thickness, this.y);
-    line(startX, startY, endX, endY);
+    line(startX, this.ogY - startY, endX, this.ogY - endY);
   }
 }
