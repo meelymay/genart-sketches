@@ -66,6 +66,13 @@ class Color {
     return color(this.r, this.g, this.b);
   }
 
+  lerp(c2, p) {
+    return new Color(
+      lerp(this.r, c2.r, p),
+      lerp(this.g, c2.g, p),
+      lerp(this.b, c2.b, p));
+  }
+
   static genGreyish() {
     let bgColor;
     while (!bgColor || bgColor.brightness() > 50 || bgColor.lightness() < 600) {
