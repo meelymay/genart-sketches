@@ -1,10 +1,10 @@
-let h = 1000;
+let h = 700;
 let w = h;
 let angle = 1/3.0;
 let columns = [];
 let square;
 let subdivideLikelihood = 0.5;
-let colors = new ColorSet(3, 18);
+let colors;
 
 class Column {
   constructor(x, y, size, height, color, otherColor) {
@@ -92,6 +92,8 @@ function setup() {
   rectMode(CENTER);
   
   strokeWeight(1);
+
+  colors = new ColorSet(3, 18);
 
   square = new SubdividedSquare(w/2.0, h/2.0, h - 100, 1.0)
 }
