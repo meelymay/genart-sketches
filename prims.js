@@ -43,3 +43,12 @@ class Point {
     this.y = y;
   }
 }
+
+class RadialPoint {
+  constructor(r, theta) {
+    this.r = r;
+    this.theta = theta;
+    this.x = this.r * cos(this.theta);
+    this.y = this.r * sin(this.theta);
+  }
+}

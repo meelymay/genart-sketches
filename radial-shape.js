@@ -1,3 +1,5 @@
+let NUM_SHAPES = 5;
+
 let centerX;
 let centerY;
 
@@ -8,13 +10,15 @@ let dr = 0;
 
 let colorSet;
 
-let shape;
+let shapes = [];
 
 class RadialShape {
   constructor(x, y) {
     this.centerX = x;
     this.centerY = y;
     this.borderPoints = [];
+    this.c1 = colorSet.chooseColor();
+    this.c2 = colorSet.chooseColor();
 
     let theta = 0;
     let startR = 100;
@@ -48,10 +52,14 @@ class RadialShape {
     push();
     translate(this.centerX, this.centerY);
 
+    noFill();
+    strokeWeight(3);
+
     for (let i = 0; i < this.borderPoints.length; i++) {
       let p = this.borderPoints[i];
 
-      ellipse(p.x, p.y, 5, 5);
+      linearGradientStroke(0, 0, p.x, p.y, this.c1, this.c2);
+      line(0, 0, p.x, p.y)
     }
 
     pop();
@@ -65,17 +73,21 @@ function setup() {
 
   colorSet = new ColorSet();
 
-  fill(colorSet.chooseColor().c());
-  noStroke();  
+  // noStroke();
 
   centerX = width/2;
   centerY = height/2;
 
-  shape = new RadialShape(centerX, centerY);
+  for (let i = 0; i < NUM_SHAPES; i++) {
+    shapes.push(new RadialShape(random() * centerX + centerX/2, random() * centerY + centerY/2));
+  }
 }
 
 function draw() {
-  shape.draw();
+  for (let s = 0; s < shapes.length; s++) {
+    let shape = shapes[s];
+    shape.draw();
+  }
 }
 
 function keyTyped() {
