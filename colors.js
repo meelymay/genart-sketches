@@ -66,6 +66,13 @@ class Color {
     return color(this.r, this.g, this.b);
   }
 
+  lerp(c2, p) {
+    return new Color(
+      lerp(this.r, c2.r, p),
+      lerp(this.g, c2.g, p),
+      lerp(this.b, c2.b, p));
+  }
+
   static genGreyish() {
     let bgColor;
     while (!bgColor || bgColor.brightness() > 50 || bgColor.lightness() < 600) {
@@ -130,4 +137,20 @@ function setColors(n) {
   }
 
   return colors;
+}
+
+function linearGradientFill(x1, y1, x2, y2, color1, color2) {
+  const ctx = canvas.getContext("2d");
+  const gradient = ctx.createLinearGradient(x1, y1, x2, y2);
+  gradient.addColorStop(0, color1.c());
+  gradient.addColorStop(1, color2.c());
+  ctx.fillStyle = gradient;
+}
+
+function linearGradientStroke(x1, y1, x2, y2, color1, color2) {
+  const ctx = canvas.getContext("2d");
+  const gradient = ctx.createLinearGradient(x1, y1, x2, y2);
+  gradient.addColorStop(0, color1.c());
+  gradient.addColorStop(1, color2.c());
+  ctx.strokeStyle = gradient;
 }

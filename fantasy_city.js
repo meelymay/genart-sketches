@@ -22,6 +22,7 @@ class Building {
 
 function setup() {
   createCanvas(800, 800);
+  pixelDensity(5);
   noStroke();
 
   colorSet = new ColorSet(3, colorVariance);
