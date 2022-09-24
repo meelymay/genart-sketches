@@ -1,4 +1,4 @@
-let NUM_SHAPES = 5;
+let NUM_SHAPES = 3;
 
 let centerX;
 let centerY;
@@ -25,10 +25,10 @@ class RadialShape {
     let r = startR;
 
     while (theta < 2 * PI) {
-      let x = r * cos(theta);
-      let y = r * sin(theta);
+      // let x = r * cos(theta);
+      // let y = r * sin(theta);
 
-      this.borderPoints.push(new Point(x, y));
+      this.borderPoints.push(new RadialPoint(r, theta));
       
       theta += 0.01;
       if (theta > 2*PI - 0.3) {
@@ -48,7 +48,7 @@ class RadialShape {
     }
   }
 
-  draw() {
+  draw(rFactor) {
     push();
     translate(this.centerX, this.centerY);
 
@@ -57,9 +57,13 @@ class RadialShape {
 
     for (let i = 0; i < this.borderPoints.length; i++) {
       let p = this.borderPoints[i];
+      let x = rFactor * p.r * cos(p.theta);
+      let y = rFactor * p.r * sin(p.theta);
 
-      linearGradientStroke(0, 0, p.x, p.y, this.c1, this.c2);
-      line(0, 0, p.x, p.y)
+      // linearGradientStroke(0, 0, x, y, this.c1, this.c2);
+      // line(0, 0, x, y)
+      stroke(this.c1.c());
+      ellipse(x, y, 3, 3);
     }
 
     pop();
@@ -67,9 +71,9 @@ class RadialShape {
 }
 
 function setup() {
-  createCanvas(400, 400);
+  createCanvas(700, 700);
   background(0);
-  noLoop();
+  // noLoop();
 
   colorSet = new ColorSet();
 
@@ -78,15 +82,29 @@ function setup() {
   centerX = width/2;
   centerY = height/2;
 
-  for (let i = 0; i < NUM_SHAPES; i++) {
-    shapes.push(new RadialShape(random() * centerX + centerX/2, random() * centerY + centerY/2));
-  }
+  // shapes.push(new RadialShape(random() * centerX, random() * centerY));
+  // shapes.push(new RadialShape(random() * centerX + centerX, random() * centerY));
+  // shapes.push(new RadialShape(random() * centerX + centerX, random() * centerY + centerY));
+  // shapes.push(new RadialShape(random() * centerX, random() * centerY + centerY));
+
+  shapes.push(new RadialShape(centerX/2, centerY/2));
+  shapes.push(new RadialShape(centerX/2 + centerX, centerY/2));
+  shapes.push(new RadialShape(centerX/2 + centerX, centerY/2 + centerY));
+  shapes.push(new RadialShape(centerX/2, centerY/2 + centerY));
+
+  r = 10;
 }
 
 function draw() {
   for (let s = 0; s < shapes.length; s++) {
     let shape = shapes[s];
-    shape.draw();
+    shape.draw(r/startR);
+  }
+
+  r++;
+
+  if (r > 500) {
+    noLoop();
   }
 }
 
