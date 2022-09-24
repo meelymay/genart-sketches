@@ -3,6 +3,8 @@ let w = 1200;
 
 let squiggles = [];
 
+let colors;
+
 let turnAroundAccel = 0.02;
 let accelRange = .05;
 let minDistance = 20;
@@ -22,7 +24,8 @@ class Squiggle {
 		this.dy = .1;
 		this.size = 10;
 		this.spread = 20;
-		this.color = new Color(random()*255, random()*255, random()*255);
+		// this.color = new Color(random()*255, random()*255, random()*255);
+		this.color = colors.chooseColor();
 		this.otherColor = new Color(
 			this.color.r - colorRange,
 			this.color.g - colorRange,
@@ -176,6 +179,8 @@ function setup() {
 	createCanvas(w, h);
 	// frameRate(60);
 	background(0);
+
+	colors = new ColorSet(3, 25);
 
 	for (let i = 0; i < numLines; i++) {
 		squiggles.push(new Squiggle(i));

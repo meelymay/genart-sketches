@@ -49,6 +49,30 @@ class ColorSet {
     );
   }
 
+  getLightest() {
+    let l = this.colors[0];
+
+    for (let c = 1; c < this.colors.length; c++) {
+      if (l.lightness() < this.colors[c].lightness()) {
+        l = this.colors[c];
+      }
+    }
+
+    return l;
+  }
+
+  getDarkest() {
+    let l = this.colors[0];
+
+    for (let c = 1; c < this.colors.length; c++) {
+      if (l.lightness() > this.colors[c].lightness()) {
+        l = this.colors[c];
+      }
+    }
+
+    return l;
+  }
+
   toHash() {
     let c1 = this.colors[0];
     return 'r' + Math.floor(c1.r) + 'g' + Math.floor(c1.g) + 'b' + Math.floor(c1.b);
@@ -68,7 +92,7 @@ class Color {
 
   static genGreyish() {
     let bgColor;
-    while (!bgColor || bgColor.brightness() > 50 || bgColor.lightness() < 600) {
+    while (!bgColor || bgColor.brightness() > 50 || bgColor.lightness() < 700) {
       bgColor = new Color(
         random() * 255,
         random() * 255,
@@ -130,4 +154,20 @@ function setColors(n) {
   }
 
   return colors;
+}
+
+function linearGradientFill(x1, y1, x2, y2, color1, color2) {
+  const ctx = canvas.getContext("2d");
+  const gradient = ctx.createLinearGradient(x1, y1, x2, y2);
+  gradient.addColorStop(0, color1.c());
+  gradient.addColorStop(1, color2.c());
+  ctx.fillStyle = gradient;
+}
+
+function linearGradientStroke(x1, y1, x2, y2, color1, color2) {
+  const ctx = canvas.getContext("2d");
+  const gradient = ctx.createLinearGradient(x1, y1, x2, y2);
+  gradient.addColorStop(0, color1.c());
+  gradient.addColorStop(1, color2.c());
+  ctx.strokeStyle = gradient;
 }
