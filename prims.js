@@ -42,10 +42,15 @@ class Point {
     this.x = x;
     this.y = y;
   }
+
+  distance(otherPoint) {
+    return ((this.x - otherPoint.x) ** 2 + (this.y - otherPoint.y) ** 2) ** 0.5
+  }
 }
 
 class RadialPoint {
   constructor(r, theta) {
+    this.absolute = false;
     this.r = r;
     this.theta = theta;
     this.x = this.r * cos(this.theta);
