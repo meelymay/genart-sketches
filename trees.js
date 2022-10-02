@@ -10,21 +10,20 @@ let taperStop = 0.5;
 let taperThickMult = 7;
 
 let branchMaxThickMult = 0.9;
-let newBranchMaxThickMult = 1.1;
-
-let mysteryHeightMult = 100;
+let newBranchMaxThickMult = 1.05;
 
 let velVar = 0.25;
 let accVar = 0.01;
 let velMult = 0.7;
 let accMult = 0.7;
 let maxVelPow = 2;
+let trueDxMult = 1.7;
 
 let taperingMult = 0.95;
 let taperVar = 0.05;
 
-let thickVar = 0.1;
-let minThickMult = 45;
+let thickVar = 0.6;
+let minThickMult = 50;
 
 // reset
 let minThick = 10;
@@ -78,12 +77,12 @@ class Tree {
         let maxThick = min(branch.maxThick, maxHeightThick);
         if (branch.thickness > maxThick) {
           branch.thickness /= 2;
-          branch.maxThick = max(branch.maxThick * branchMaxThickMult, branch.thickness*newBranchMaxThickMult);
+          branch.maxThick = max(branch.maxThick * branchMaxThickMult, branch.thickness * newBranchMaxThickMult);
           let ogX = branch.x+branch.run()/2
           this.branches.push(
             new Branch(
               ogX,
-              branch.y+branch.rise()/2+1, 
+              branch.y+branch.rise()/2 + branch.dy,
               branch.thickness,
               branch.maxThick,
               branch.color,
@@ -114,38 +113,44 @@ class Branch {
     this.maxThick = maxThick;
     this.dThick = .1;
     this.color = color;
-    this.height = height * mysteryHeightMult;
+    this.height = height;
   }
 
   step(taper) {
     // * Math.pow(this.curHeight()/this.height, trueDxMult);
-    this.trueDx = this.dx;
-    // this.x += this.trueDx;
+    let dxMult = 2*(this.curHeight())/this.height;
+    console.log("dx mult", dxMult);
+    this.trueDx = this.dx * dxMult;
     let ogDist = this.ogX - this.x;
-    // console.log('OGDIST', ogDist);
-    if (ogDist != 0) {
-      this.x += -1 * abs(ogDist)/ogDist;
+    let dirShift = 0;
+    if (ogDist != 0 && this.curHeight()/this.height > .1) {
+      dirShift = .5 * abs(ogDist)/ogDist;
     }
-    this.dx += 0; // randomGaussian(this.ddx, velVar);
+    this.x += this.trueDx - dirShift;
+    // console.log('OGDIST', ogDist);
+    // if (ogDist != 0) {
+    //   this.x += -1 * abs(ogDist)/ogDist;
+    // }
+    this.dx += randomGaussian(this.ddx, velVar);
     this.ddx += randomGaussian(0, accVar);
     this.y -= this.dy;
 
 
-    // let wat = 1 + Math.pow(this.curHeight()/this.height, maxVelPow);
-    // if (abs(this.dx) > maxVel * wat) {
-    //   this.dx *= velMult;
-    //   this.ddx *= -accMult;
-    //   // this.dx -= abs(this.dx)/this.dx * .25 * this.dx;
-    // }
+    let wat = 1 + Math.pow(this.curHeight()/this.height, maxVelPow);
+    if (abs(this.dx) > maxVel * wat) {
+      this.dx *= velMult;
+      this.ddx *= -accMult;
+      // this.dx -= abs(this.dx)/this.dx * .25 * this.dx;
+    }
 
     if (taper) {
       this.thickness *= randomGaussian(taperingMult, taperVar);
       return;
     }
 
-    this.thickness += .2; // this.dThick;
+    this.thickness += this.dThick;
     // this.thickness += randomGaussian(0, 1.5);
-    this.dThick += randomGaussian(0, thickVar);
+    this.dThick += randomGaussian(0, thickVar * this.curHeight() / this.height);
 
     if (this.thickness < minThick) {
       this.dThick = 0;
@@ -172,10 +177,10 @@ class Branch {
     let run = this.run();
     let rise = this.rise();
     let startX = this.x - run / 2;
-    let startY = this.curHeight() - rise / 2;
+    let startY = (this.ogY  - this.curHeight()) - rise / 2;
     let endX = this.x + run / 2;
-    let endY = this.curHeight() + rise / 2;
+    let endY = (this.ogY - this.curHeight()) + rise / 2;
     // line(this.x, this.y, this.x + this.thickness, this.y);
-    line(startX, this.ogY - startY, endX, this.ogY - endY);
+    line(startX, startY, endX, endY);
   }
 }
